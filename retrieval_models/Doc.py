@@ -10,11 +10,11 @@ Date: 3-24-2016
 """
 
 class Document:
-  def __init__(self, docID, title, docLen, wordsCount):
+  def __init__(self, docID, title, docLen, termsCount):
     self.__docID = docID
     self.__title = title
     self.__docLen = docLen
-    self.__wordsCount = wordsCount
+    self.__termsCount = termsCount
 
   """
   Getters
@@ -25,5 +25,20 @@ class Document:
     return self.__title
   def getDocLen(self):
     return self.__docLen
-  def getWordsCount(self):
-    return self.__wordsCount
+  def getTermsCount(self):
+    return self.__termsCount
+
+
+class Query:
+  def __init__(self, length, termsCount):
+    self.__length = length
+    self.__termsCount = termsCount
+
+  """
+  Getters
+  """
+  def getLength(self):
+    return self.__length
+  def getTermsCount(self):
+    return self.__termsCount
+
