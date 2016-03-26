@@ -10,11 +10,11 @@ from Doc import Document
 from sets import Set
 
 class QueryInfo:
-  def __init__(self, query, totalDocs, df):
+  def __init__(self, query, docs, totalDocs, dfTerms):
     self.__query = query
-    self.__docs =
+    self.__docs = docs
     self.__totalDocs = totalDocs
-    self.__df = df
+    self.__dfTerms = dfTerms
 
 
 def generateQueryInfo(query, ii_list, totalDocs):

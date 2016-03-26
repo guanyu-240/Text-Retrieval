@@ -25,7 +25,7 @@ class InvertedIndex(Base):
   __tablename__ = 'inverted_index'
   term = Column(String, primary_key = True)
   cntTerms = Column(Float, nullable = False)
-  cntMatchingDocs = Column(Float, nullable = False)
+  dfTerm = Column(Float, nullable = False)
   docsCnt = Column(String)
   
 
