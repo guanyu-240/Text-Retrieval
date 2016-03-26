@@ -6,8 +6,13 @@ Date: 3-25-2016
 -------------------------------------------------------------------------------
 """
 import sys
+import json
 sys.path.append("../stemming-1.0")
+sys.path.append("../")
 from stemming.porter2 import stem
+from retrieval_models.db_engine import DB_Session
+
+db_s = DB_Session()
 
 dict_terms = {}
 
@@ -99,7 +104,10 @@ def add_to_dict(words, doc_id, doc_len):
       termsCountStr += ' '
     termsCountStr += '%s %d' % (k, v)
   docStr = "%s\t#\t%d\t%s\n" % (doc_id, doc_len, termsCountStr)
+  db_s.addDocument(doc_id, "#", doc_len, termsCountStr)
   docwriter.write(docStr)
+
+
 
 avg_len = 0
 freader = open('cacm.all')
@@ -125,7 +133,7 @@ while line != None:
     doc_id = int(words[1])
     if doc_id > 3204:
     	break
-    print "Indexing document " + words[1]
+    #print "Indexing document " + words[1]
     catg = ''
     terms = []
   elif line.startswith('.'):
@@ -152,11 +160,12 @@ fwriter.close()
 fwriter = open('index', 'w')
 for k,v in dict_terms.iteritems():
   tmp_str = k
-  for ele in v:
-    tmp_str = tmp_str + ' ' + str(ele)
-  tmp_str = tmp_str + '\n'
-  fwriter.write(tmp_str)
+  docs_cnt = [str(x) for x in v[2:]]
+  docs_cnt_str = ','.join(docs_cnt)
+  db_s.addIIEntry(k, float(v[0]), float(v[1]), docs_cnt_str)
+  fwriter.write(docs_cnt_str+"\n")
 
+db_s.commit()
 
 fwriter.close()
 
