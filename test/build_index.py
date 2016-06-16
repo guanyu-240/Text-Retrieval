@@ -10,74 +10,15 @@ import json
 sys.path.append("../stemming-1.0")
 sys.path.append("../")
 from stemming.porter2 import stem
-from retrieval_models.db_engine import DB_Session
+from rel_models.db_engine import DB_Session
+from doc_process import process
 
 db_s = DB_Session()
 
 dict_terms = {}
 
-def char_valid(c):
-  if c >= '0' and c <= '9':
-    return True
-  elif c >= 'A' and c <= 'Z':
-    return True
-  elif c >= 'a' and c <= 'z':
-    return True
-  else: return False
-  
-def remove_white(ls):
-  tmp = ls
-  for word in tmp:
-    if word == '':
-    	tmp.remove('')
-  return tmp
-    
-def process(words):
-  terms = words
-  #print terms
-  terms = remove_white(terms)
-  for n in range(len(terms)):
-    temp = terms[n]
-    terms[n] = temp.lower()
-  for n in range(len(terms)):
-    temp = terms[n]
-    #print temp
-    first = temp[0]
-    if char_valid(first) == False:
-    	temp = temp[1:]
-    	terms[n] = temp 
-  #print terms
-  terms = remove_white(terms)
-  #print terms
-  for n in range(len(terms)):
-    temp = terms[n]
-    last = temp[-1]
-    if char_valid(last) == False:
-    	temp = temp[:-1]
-    	terms[n] = temp
-
-  terms = remove_white(terms)
-  return terms
-
 freader = open('stop_words')
 stop_words = freader.read().split()
-def stop(words):
-  temp = []
-  if '' in stop_words:
-    stop_words.remove('')
-  for a_word in words:
-    if a_word not in stop_words:
-    	#print 'filter ' + a_word
-    	temp.append(a_word)
-  return temp
-    
-def p_stem(words):
-  temp = words
-  for n in range(len(temp)):
-    a_word = temp[n]
-    new_word = stem(a_word)
-    temp[n] = new_word
-  return temp
 
 docwriter = open('docs.all', 'w') 
 
@@ -119,11 +60,7 @@ while line != None:
   line = line[:-1]
   if line.startswith('.I'):
     if len(terms) != 0:
-    	terms = process(terms)
-    	terms = process(terms)
-    	#print terms
-    	terms = stop(terms)
-    	terms = p_stem(terms)
+    	terms = process(terms, stop_words)
     	#print 'a' in terms
     	#print terms
     	doc_len = len(terms)
