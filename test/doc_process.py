@@ -5,6 +5,11 @@ Author: Guanyu Wang
 Date: 6-16-2016
 -------------------------------------------------------------------------------
 """
+import sys
+
+sys.path.append("../stemming-1.0")
+sys.path.append("../")
+
 from stemming.porter2 import stem
 
 def char_valid(c):

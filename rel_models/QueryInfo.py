@@ -6,9 +6,9 @@ Date: 3-24-2016
 -------------------------------------------------------------------------------
 """
 
-from Doc import Document
+from Models import Document
 from sets import Set
-
+from query import Query
 class QueryInfo:
   def __init__(self, query, docs, totalDocs, dfTerms):
     self.__query = query
@@ -16,6 +16,14 @@ class QueryInfo:
     self.__totalDocs = totalDocs
     self.__dfTerms = dfTerms
 
+  def output(self):
+    print self.__query.getTermsCount()
+    print len(self.__docs)
+    docIds = [d.docID for d in self.__docs]
+    docIds.sort()
+    print docIds
+    print self.__totalDocs
+    print self.__dfTerms
 
 def generateQueryInfo(query, ii_list, totalDocs):
   termsCount = query.getTermsCount()
@@ -39,7 +47,7 @@ def generateQueryInfo(query, ii_list, totalDocs):
 def newQueryObj(query_terms):
   termsCount = {}
   for term in query_terms:
-    cnt = termsCount.get(term):
+    cnt = termsCount.get(term)
     if cnt is None:
       termsCount[term] = 1
     else: termsCount[term] = cnt+1

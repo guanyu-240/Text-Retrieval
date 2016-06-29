@@ -2,6 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from Models import Base,Document,InvertedIndex
 from query import Query
+from QueryInfo import QueryInfo
 from sets import Set
 
 class DB_Session():
@@ -40,18 +41,17 @@ class DB_Session():
     docIDs = Set([])
     docs = []
     for term in termsCount.keys():
-      query = self.__session.query(InvertedIndex).filter(InvertedIndex.term==term)
+      query_ret = self.__session.query(InvertedIndex).filter(InvertedIndex.term==term)
       # if no matching document is found
-      if query is None or len(query) == 0:
+      print query_ret.count()
+      if query_ret is None or query_ret.count() == 0:
         dfTerms.append(0)
         continue
-      dfTerm = query.first().dfTerm
+      dfTerm = query_ret.first().dfTerm
       dfTerms.append(dfTerm)
-      docsCntStr = query.first().docsCnt
+      docsCntStr = query_ret.first().docsCnt
       docsCntList = docsCntStr.split(",")
-      if len(docsCntList) == 0:
-        dfTerms.append
-      for i in range(dfTerm):
+      for i in range(int(dfTerm)):
         docID = docsCntList[2*i]
         if docID in docIDs: continue
         docIDs.add(docID)
@@ -59,4 +59,4 @@ class DB_Session():
         query_ret = self.__session.query(Document).filter(Document.docID==docID)
         doc = query_ret.first()
         docs.append(doc)
-    return QueryInfo(query, docs, totalDocs, df)
+    return QueryInfo(query, docs, totalDocs, dfTerms)
