@@ -37,18 +37,17 @@ class DB_Session():
   """
   def getDocsFromQuery(self, query, totalDocs):
     termsCount = query.getTermsCount()
-    dfTerms = []
+    dfTerms = {}
     docIDs = Set([])
     docs = []
     for term in termsCount.keys():
       query_ret = self.__session.query(InvertedIndex).filter(InvertedIndex.term==term)
       # if no matching document is found
-      print query_ret.count()
       if query_ret is None or query_ret.count() == 0:
-        dfTerms.append(0)
+        dfTerms[term] = 0
         continue
       dfTerm = query_ret.first().dfTerm
-      dfTerms.append(dfTerm)
+      dfTerms[term] = dfTerm
       docsCntStr = query_ret.first().docsCnt
       docsCntList = docsCntStr.split(",")
       for i in range(int(dfTerm)):

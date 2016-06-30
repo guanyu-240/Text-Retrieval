@@ -20,6 +20,12 @@ class Document(Base):
       term = tmp_list[2*i]
       cnt = int(tmp_list[2*i+1])
       self.termsCount[term] = cnt
+
+  def getTermsCount(self):
+    return self.termsCount
+
+  def getDocLen(self):
+    return self.docLen
   
 class InvertedIndex(Base):
   __tablename__ = 'inverted_index'

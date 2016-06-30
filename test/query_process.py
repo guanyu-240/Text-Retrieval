@@ -85,4 +85,6 @@ avg_q_len = float(avg_q_len)/64.0
 
 db = DB_Session()
 q = newQueryObj(queries[1])
-query_info = db.getDocsFromQuery(q, 3000)
+query_info = db.getDocsFromQuery(q, 3204)
+scores = query_info.getOkapiScores(False, 35, avg_q_len)
+print scores

@@ -9,6 +9,8 @@ Date: 3-24-2016
 from Models import Document
 from sets import Set
 from query import Query
+from calc import get_okapi_score
+
 class QueryInfo:
   def __init__(self, query, docs, totalDocs, dfTerms):
     self.__query = query
@@ -20,10 +22,18 @@ class QueryInfo:
     print self.__query.getTermsCount()
     print len(self.__docs)
     docIds = [d.docID for d in self.__docs]
-    docIds.sort()
     print docIds
     print self.__totalDocs
     print self.__dfTerms
+
+  def getOkapiScores(self, use_idf, avg_len, avg_q_len):
+    scores = [] 
+    for d in self.__docs:
+      score = get_okapi_score(use_idf, self.__query, d, self.__dfTerms, avg_len, avg_q_len)
+      scores.append((d.docID, score))
+    scores.sort(key=lambda x: x[1], reverse=True)
+    return scores
+    
 
 def generateQueryInfo(query, ii_list, totalDocs):
   termsCount = query.getTermsCount()

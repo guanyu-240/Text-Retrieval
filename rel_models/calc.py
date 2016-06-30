@@ -16,7 +16,7 @@ def get_okapi_score(use_idf, query, doc, df, avg_len, avg_q_len):
   termsInDoc = doc.getTermsCount()
   termsInQuery = query.getTermsCount()
   for term, query_tf in termsInQuery.iteritems():
-    tf = TermsCountDoc.get(term)
+    tf = termsInDoc.get(term)
     if tf == None: tf = 0
     if use_idf:
       idf = df[term]
