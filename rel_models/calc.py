@@ -39,5 +39,5 @@ def laplace_smoothing(query, doc, k):
     for term,query_tf in termsInQuery.iteritems():
       tf = termsInDoc.get(term)
       if tf == None: tf = float(0)
-      score += log(math.pow((tf + 1)/(float(doc_len) + float(k)), float(query_tf)))
+      score += log(pow((tf + 1)/(float(doc_len) + float(k)), float(query_tf)))
     return score

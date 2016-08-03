@@ -9,7 +9,7 @@ Date: 3-24-2016
 from Models import Document
 from sets import Set
 from query import Query
-from calc import get_okapi_score
+from calc import get_okapi_score, laplace_smoothing
 
 class QueryInfo:
   def __init__(self, query, docs, totalDocs, dfTerms):
