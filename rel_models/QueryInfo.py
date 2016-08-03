@@ -26,10 +26,18 @@ class QueryInfo:
     print self.__totalDocs
     print self.__dfTerms
 
-  def getOkapiScores(self, use_idf, avg_len, avg_q_len):
+  def getOkapiScores(self, use_idf, total_d, total_q, avg_len, avg_q_len):
     scores = [] 
     for d in self.__docs:
-      score = get_okapi_score(use_idf, self.__query, d, self.__dfTerms, avg_len, avg_q_len)
+      score = get_okapi_score(use_idf, total_d, total_q, self.__query, d, self.__dfTerms, avg_len, avg_q_len)
+      scores.append((d.docID, score))
+    scores.sort(key=lambda x: x[1], reverse=True)
+    return scores
+
+  def getLaplaceSmoothingScore(self, k):
+    scores = []
+    for d in self.__docs:
+      score = laplace_smoothing(self.__query, d, k)
       scores.append((d.docID, score))
     scores.sort(key=lambda x: x[1], reverse=True)
     return scores

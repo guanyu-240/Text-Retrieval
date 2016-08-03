@@ -44,28 +44,6 @@ while line != None:
     line = freader.readline()
     continue;
   line = freader.readline()
-  
-
-#print q_id
-q_id = int(sys.argv[1])
-if q_id >=1 and q_id <= 64:
-  query_terms = queries.get(q_id)
-
-else:
-  input_query = raw_input("Please enter your query terms, press ENTER to finish:")
-  query_terms = input_query.split()
-  query_terms = process(query_terms, stop_words)
-  
-  
-#print query_terms
-
-q_len = len(query_terms)
-#print queries
-for a_term in terms_count:
-  count = terms_count.get(a_term)
-  if count == None:
-    count = 0
-  terms_count[a_term]=(count + 1)
 
 df_q = {}
 avg_q_len = 0
@@ -81,10 +59,36 @@ for k,v in queries.iteritems():
       df_q[word] = df
       words_list.append(word)
 
-avg_q_len = float(avg_q_len)/64.0
+avg_q_len = float(avg_q_len)/64.0  
 
-db = DB_Session()
-q = newQueryObj(queries[1])
-query_info = db.getDocsFromQuery(q, 3204)
-scores = query_info.getOkapiScores(False, 35, avg_q_len)
-print scores
+#print query_terms
+def process_query(query_terms, algo):
+  q_len = len(query_terms)
+  for a_term in query_terms:
+    count = terms_count.get(a_term)
+    if count == None:
+      count = 0
+    terms_count[a_term]=(count + 1)
+
+  db = DB_Session()
+  q = newQueryObj(query_terms)
+  query_info = db.getDocsFromQuery(q, 3204)
+  if algo == 'okapi':
+    return query_info.getOkapiScores(False, 3204, 1, 35, avg_q_len)
+  elif algo == 'okapi_idf':
+    return query_info.getOkapiScores(True, 3204, 1, 35, avg_q_len)
+  elif algo == 'laplace':
+    return query_info.getLaplaceSmoothingScores(9742)
+  return []
+
+#print q_id
+q_id = int(sys.argv[1])
+algo = sys.argv[2]
+if q_id >=1 and q_id <= 64:
+  query_terms = queries.get(q_id)
+
+else:
+  input_query = raw_input("Please enter your query terms, press ENTER to finish:")
+  query_terms = input_query.split()
+  query_terms = process(query_terms, stop_words)
+print process_query(query_terms, algo)
