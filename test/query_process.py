@@ -10,6 +10,10 @@ freader = open('query.text')
 freader_stop = open('stop_words')
 stop_words = freader_stop.read().split()
 
+cnt_terms_corpus = 0
+cnt_unique_terms = 0
+avg_doc_len = 0
+
 # start processing sample queries
 queries = {}
 terms_count = {}
@@ -75,11 +79,15 @@ def process_single_query(q_id, db, query_terms, algo, fw):
   query_info = db.getDocsFromQuery(q, 3204)
   scores = None
   if algo == 'Okapi':
-    scores = query_info.getOkapiScores(False, 3204, 1, 35, avg_q_len)
+    scores = query_info.getOkapiScores(False, 3204, 1, avg_doc_len, avg_q_len)
   elif algo == 'Okapi_IDF':
-    scores = query_info.getOkapiScores(True, 3204, 1, 35, avg_q_len)
+    scores = query_info.getOkapiScores(True, 3204, 1, avg_doc_len, avg_q_len)
   elif algo == 'Laplace':
-    scores = query_info.getLaplaceSmoothingScore(9742)
+    scores = query_info.getLaplaceSmoothingScore(cnt_unique_terms)
+  elif algo == 'JM':
+    scores = query_info.getJMSmoothingScore(0.2, cnt_terms_corpus)
+  elif algo == 'bm25':
+    scores = query_info.getBM25Score(3204, avg_doc_len, 0.75)
   output_query(q_id, scores, algo, fw)
 
 def process_query(q_id, query_terms, algo, f_name):
@@ -100,10 +108,15 @@ def process_query(q_id, query_terms, algo, f_name):
 if len(sys.argv) < 4:
   print "Usage: %s <query id> <algorithm> <output file>"
   sys.exit(1)
+
 q_id = int(sys.argv[1])
 algo = sys.argv[2]
 f_name = sys.argv[3]
 query_terms = None
+
+corpus_info = open("corpus_info").read().split()
+cnt_terms_corpus,cnt_unique_terms,avg_doc_len = int(corpus_info[0]),int(corpus_info[1]),int(corpus_info[2])
+
 if q_id == -1:
   input_query = raw_input("Please enter your query terms, press ENTER to finish:")
   query_terms = input_query.split()
