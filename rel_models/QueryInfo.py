@@ -9,7 +9,7 @@ Date: 3-24-2016
 from Models import Document
 from sets import Set
 from query import Query
-from calc import get_okapi_score, laplace_smoothing
+from calc import get_okapi_score, laplace_smoothing, jm_smoothing, okapi_bm25
 
 class QueryInfo:
   def __init__(self, query, docs, totalDocs, dfTerms):
@@ -41,7 +41,22 @@ class QueryInfo:
       scores.append((d.docID, score))
     scores.sort(key=lambda x: x[1], reverse=True)
     return scores
-    
+
+  def getJMSmoothingScore(self, lambda_w, cnt_terms_corpus):
+    scores = []
+    for d in self.__docs:
+      score = jm_smoothing(self.__query, d, lambda_w, cnt_terms_corpus)
+      scores.append((d.docID, score))
+    scores.sort(key=lambda x: x[1], reverse=True)
+    return scores
+
+  def getBM25Score(self, cnt_docs, avg_len, b):
+    scores = []
+    for d in self.__docs:
+      score = okapi_bm25(self.__query, d, cnt_docs, avg_len, self.__dfTerms, b)
+      scores.append((d.docID, score))
+    scores.sort(key=lambda x: x[1], reverse=True)
+    return scores
 
 def generateQueryInfo(query, ii_list, totalDocs):
   termsCount = query.getTermsCount()
