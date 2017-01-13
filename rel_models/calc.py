@@ -8,10 +8,16 @@ Date: 3-24-2016
 """
 
 def get_okapi (tf, doc_len, avglen):
+  """
+  Calculate Okapi score of a term
+  """
   okapi = float(tf)/(float(tf) + 0.5 + 1.5*(float(doc_len)/float(avglen)))
   return okapi
 
 def get_okapi_score(use_idf, total_d, total_q, query, doc, df, avg_len, avg_q_len):
+  """
+  Calcualte Okapi score of a document
+  """
   score = 0.0
   termsInDoc = doc.getTermsCount()
   termsInQuery = query.getTermsCount()
@@ -32,6 +38,9 @@ def get_okapi_score(use_idf, total_d, total_q, query, doc, df, avg_len, avg_q_le
   return score  
                  
 def laplace_smoothing(query, doc, k):
+  """
+  Query likelyhood relevance calculation with Laplace smoothing
+  """
   score = 0.0
   termsInDoc = doc.getTermsCount()
   termsInQuery = query.getTermsCount()
@@ -43,6 +52,9 @@ def laplace_smoothing(query, doc, k):
   return score
 
 def jm_smoothing(query, doc, lambda_w, cnt_terms_corpus):
+  """
+  Query likelyhood relevance calculation with Jelinek-Mercer smoothing
+  """
   score = 0.0
   termsInDoc = doc.getTermsCount()
   termsInQuery = query.getTermsCount()
@@ -56,6 +68,9 @@ def jm_smoothing(query, doc, lambda_w, cnt_terms_corpus):
   return score
 
 def okapi_bm25(query, doc, cnt_docs, avg_len, df, b):
+  """
+  Relevance with Okapi-BM25 language statistic model
+  """
   k1 = 1.2
   k2 = 100.0
   score = 0.0
